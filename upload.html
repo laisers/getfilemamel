@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка видео</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .dropzone {
+            border: 2px dashed #007BFF;
+            border-radius: 5px;
+            padding: 20px 20px 70px 20px;  /* Увеличиваем нижний padding на 5 см */
+            text-align: center;
+            cursor: pointer;
+            height: calc(100% + 5cm);  /* Увеличиваем высоту на 5 см */
+        }
+        .dropzone:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Загрузите видео</h5>
+                    <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+                        <div class="form-group dropzone" id="dropzone">
+                            Перетащите файл сюда или <br> кликните для выбора файла
+                            <input type="file" class="form-control-file" name="file" id="fileInput" required style="display: none;">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    function updateDropzoneForFileType(file) {
+        const videoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
+        if (videoTypes.includes(file.type)) {
+            dropzone.style.color = 'black';
+            dropzone.innerHTML = file.name;
+        } else {
+            dropzone.style.color = 'red';
+            dropzone.innerHTML = 'Выберите видеофайл! <br> Перетащите файл сюда или <br> кликните для выбора файла';
+        }
+    }
+
+    dropzone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (event) => {
+        if (event.target.files.length) {
+            updateDropzoneForFileType(event.target.files[0]);
+        }
+    });
+
+    dropzone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropzone.classList.add('bg-light');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('bg-light');
+    });
+
+    dropzone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropzone.classList.remove('bg-light');
+
+        fileInput.files = event.dataTransfer.files;
+        updateDropzoneForFileType(event.dataTransfer.files[0]);
+    });
+</script>
+
+</body>
+</html>
